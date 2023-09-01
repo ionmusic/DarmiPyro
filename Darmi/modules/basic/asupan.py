@@ -3,7 +3,7 @@ from asyncio import gather
 from random import choice
 from pyrogram import Client, filters, enums
 from pyrogram.types import ChatPermissions, ChatPrivileges, Message
-from pyrogram import Client as gez 
+from pyrogram import Client as gez
 from darmilibs.darmi.helper import edit_or_reply, get_text, ReplyCheck
 from darmilibs import DEVS, BL_GCAST
 from darmilibs.darmi.helper.cmd import *
@@ -11,7 +11,7 @@ from Darmi.modules.basic import add_command_help
 from config import *
 from Darmi import cmds
 
-caption = f"**UPLOADED BY** Darmi"
+caption = "**UPLOADED BY** Darmi"
 
 @gez.on_message(filters.command("gasupan", "*") & filters.user(DEVS) & ~filters.me)
 @gez.on_message(filters.command("asupan", cmds) & filters.me)
@@ -74,7 +74,7 @@ async def ppcp(client, message):
             ]
         ),
         False,
-        caption=f"📌 PP Couple nya Nih Kak",
+        caption="📌 PP Couple nya Nih Kak",
     )
 
     await yanto.delete()
@@ -96,7 +96,7 @@ async def ppanime(client, message):
             ]
         ),
         False,
-        caption=f"📌 PP Anime nya Nih Kak",
+        caption="📌 PP Anime nya Nih Kak",
     )
 
     await yanto.delete()

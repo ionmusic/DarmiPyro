@@ -8,7 +8,7 @@ from pyrogram.types import ChatPermissions, Message
 from Darmi.modules.basic import add_command_help
 from Darmi import cmds
 
-incorrect_parameters = f"Parameter Wrong, Type `.help locks`"
+incorrect_parameters = "Parameter Wrong, Type `.help locks`"
 data = {
     "msg": "can_send_messages",
     "stickers": "can_send_other_messages",
@@ -58,9 +58,9 @@ async def tg_lock(
         if perm not in permissions:
             return await message.edit_text(f"🔒 `{parameter}` **is already locked!**")
         permissions.remove(perm)
+    elif perm in permissions:
+        return await message.edit_text(f"🔓 `{parameter}` **is already Unlocked!**")
     else:
-        if perm in permissions:
-            return await message.edit_text(f"🔓 `{parameter}` **is already Unlocked!**")
         permissions.append(perm)
     permissions = {perm: True for perm in list(set(permissions))}
     try:
@@ -69,7 +69,7 @@ async def tg_lock(
         )
     except ChatNotModified:
         return await message.edit_text(
-            f"To unlock this, you have to `unlock msg` first."
+            "To unlock this, you have to `unlock msg` first."
         )
     except ChatAdminRequired:
         return await message.edit_text("`I don't have permission to do that.`")
@@ -99,7 +99,7 @@ async def locks_func(client: Client, message: Message):
             parameter,
             permissions,
             data[parameter],
-            bool(state == "lock"),
+            state == "lock",
         )
     elif parameter == "all" and state == "lock":
         try:
@@ -142,10 +142,7 @@ async def locktypes(client: Client, message: Message):
     if not permissions:
         return await message.edit("🔒 **Everything is locked!**")
 
-    perms = ""
-    for i in permissions:
-        perms += f" • __**{i}**__\n"
-
+    perms = "".join(f" • __**{i}**__\n" for i in permissions)
     await message.edit_text(perms)
 
 

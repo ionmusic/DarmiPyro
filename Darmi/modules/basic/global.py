@@ -74,11 +74,10 @@ async def ungban_user(client: Client, message: Message):
         ex = await message.edit("`UnGbanning....`")
     if not user_id:
         return await ex.edit("I can't find that user.")
-    if user_id:
-        try:
-            user = await client.get_users(user_id)
-        except Exception:
-            return await ex.edit("`Please specify a valid user!`")
+    try:
+        user = await client.get_users(user_id)
+    except Exception:
+        return await ex.edit("`Please specify a valid user!`")
 
     try:
         if not (await Darmi.gban_info(user.id)):

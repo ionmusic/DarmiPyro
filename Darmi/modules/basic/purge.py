@@ -7,8 +7,7 @@ from Darmi import cmds
 
 @Client.on_message(filters.command("del", cmds) & filters.me)
 async def del_msg(client: Client, message: Message):
-    msg_src = message.reply_to_message
-    if msg_src:
+    if msg_src := message.reply_to_message:
         if msg_src.from_user.id:
             try:
                 await client.delete_messages(message.chat.id, msg_src.id)
@@ -23,8 +22,7 @@ async def del_msg(client: Client, message: Message):
 @Client.on_message(filters.command("purge", cmds) & filters.me)
 async def purge(client: Client, message: Message):
     ex = await message.edit_text("`Starting To Purge Messages!`")
-    msg = message.reply_to_message
-    if msg:
+    if msg := message.reply_to_message:
         itermsg = list(range(msg.id, message.id))
     else:
         await ex.edit("`Reply To Message To Purge!`")

@@ -10,9 +10,7 @@ def get_arg(message: Message):
     msg = message.text
     msg = msg.replace(" ", "", 1) if msg[1] == " " else msg
     split = msg[1:].replace("\n", " \n").split(" ")
-    if " ".join(split[1:]).strip() == "":
-        return ""
-    return " ".join(split[1:])
+    return "" if not " ".join(split[1:]).strip() else " ".join(split[1:])
 
 @Client.on_message(filters.command("tagall", cmds) & filters.me)
 async def mentionall(client: Client, message: Message):
@@ -26,7 +24,7 @@ async def mentionall(client: Client, message: Message):
     usrnum = 0
     usrtxt = ""
     async for usr in client.get_chat_members(chat_id):
-        if not chat_id in spam_chats:
+        if chat_id not in spam_chats:
             break
         usrnum += 1
         usrtxt += f"[{usr.user.first_name}](tg://user?id={usr.user.id}), "
@@ -47,14 +45,13 @@ async def mentionall(client: Client, message: Message):
 
 @Client.on_message(filters.command("cancel", cmds) & filters.me)
 async def cancel_spam(client: Client, message: Message):
-    if not message.chat.id in spam_chats:
+    if message.chat.id not in spam_chats:
         return await message.edit("**It seems there is no tagall here.**")
-    else:
-        try:
-            spam_chats.remove(message.chat.id)
-        except:
-            pass
-        return await message.edit("**Cancelled.**")
+    try:
+        spam_chats.remove(message.chat.id)
+    except:
+        pass
+    return await message.edit("**Cancelled.**")
 
 
 add_command_help(
@@ -64,9 +61,6 @@ add_command_help(
             f"{cmds}tagall [text/reply ke chat]",
             f"{cmds}Tag all the members one by one",
         ],
-        [
-            f"{cmds}cancel",
-            f"to stop tagall",
-        ],
+        [f"{cmds}cancel", "to stop tagall"],
     ],
 )

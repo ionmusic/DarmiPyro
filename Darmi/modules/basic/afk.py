@@ -25,52 +25,53 @@ def subtract_time(start, end):
     ((filters.group & filters.mentioned) | filters.private) & ~filters.me & ~filters.service, group=3
 )
 async def collect_afk_messages(bot: Client, message: Message):
-    if AFK:
-        last_seen = subtract_time(datetime.now(), AFK_TIME)
-        is_group = True if message.chat.type in ["supergroup", "group"] else False
-        CHAT_TYPE = GROUPS if is_group else USERS
+    if not AFK:
+        return
+    last_seen = subtract_time(datetime.now(), AFK_TIME)
+    is_group = message.chat.type in ["supergroup", "group"]
+    CHAT_TYPE = GROUPS if is_group else USERS
 
-        if GetChatID(message) not in CHAT_TYPE:
+    if GetChatID(message) not in CHAT_TYPE:
+        text = (
+            f"`Saya Sedang AFK.\n"
+            f"Last seen: {last_seen}\n"
+            f"Reason: ```{AFK_REASON.upper()}```\n"
+        )
+        await bot.send_message(
+            chat_id=GetChatID(message),
+            text=text,
+            reply_to_message_id=ReplyCheck(message),
+        )
+        CHAT_TYPE[GetChatID(message)] = 1
+        return
+    elif GetChatID(message) in CHAT_TYPE:
+        if CHAT_TYPE[GetChatID(message)] == 50:
             text = (
-                f"`Saya Sedang AFK.\n"
-                f"Last seen: {last_seen}\n"
-                f"Reason: ```{AFK_REASON.upper()}```\n"
+            f"`Saya Sedang AFK.\n"
+            f"Last seen: {last_seen}\n"
+            f"Reason: ```{AFK_REASON.upper()}```\n"
             )
             await bot.send_message(
                 chat_id=GetChatID(message),
                 text=text,
                 reply_to_message_id=ReplyCheck(message),
             )
-            CHAT_TYPE[GetChatID(message)] = 1
+        elif CHAT_TYPE[GetChatID(message)] > 50:
             return
-        elif GetChatID(message) in CHAT_TYPE:
-            if CHAT_TYPE[GetChatID(message)] == 50:
-                text = (
-                f"`Saya Sedang AFK.\n"
+        elif CHAT_TYPE[GetChatID(message)] % 5 == 0:
+            text = (
+                f"`Saya masih AFK.\n"
                 f"Last seen: {last_seen}\n"
-                f"Reason: ```{AFK_REASON.upper()}```\n"
-                )
-                await bot.send_message(
-                    chat_id=GetChatID(message),
-                    text=text,
-                    reply_to_message_id=ReplyCheck(message),
-                )
-            elif CHAT_TYPE[GetChatID(message)] > 50:
-                return
-            elif CHAT_TYPE[GetChatID(message)] % 5 == 0:
-                text = (
-                    f"`Saya masih AFK.\n"
-                    f"Last seen: {last_seen}\n"
-                    f"Still busy: ```{AFK_REASON.upper()}```\n"
-                    f"ga usah bawel.`"
-                )
-                await bot.send_message(
-                    chat_id=GetChatID(message),
-                    text=text,
-                    reply_to_message_id=ReplyCheck(message),
-                )
+                f"Still busy: ```{AFK_REASON.upper()}```\n"
+                f"ga usah bawel.`"
+            )
+            await bot.send_message(
+                chat_id=GetChatID(message),
+                text=text,
+                reply_to_message_id=ReplyCheck(message),
+            )
 
-        CHAT_TYPE[GetChatID(message)] += 1
+    CHAT_TYPE[GetChatID(message)] += 1
 
 
 @Client.on_message(filters.command("afk", cmds) & filters.me, group=3)
@@ -78,11 +79,7 @@ async def afk_set(bot: Client, message: Message):
     global AFK_REASON, AFK, AFK_TIME
 
     cmd = message.command
-    afk_text = ""
-
-    if len(cmd) > 1:
-        afk_text = " ".join(cmd[1:])
-
+    afk_text = " ".join(cmd[1:]) if len(cmd) > 1 else ""
     if isinstance(afk_text, str):
         AFK_REASON = afk_text
 

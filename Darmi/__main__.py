@@ -28,7 +28,7 @@ async def main():
     LOGGER("Darmi").info("LOG: Memulai Darmi Pyro..")
     LOGGER("Darmi").info("LOG: Loading Everything.")
     for all_module in ALL_MODULES:
-        importlib.import_module("Darmi.modules" + all_module)
+        importlib.import_module(f"Darmi.modules{all_module}")
         LOGGER("Darmi").info(f"Successfully Imported {all_module} ")
     for bot in bots:
         try:

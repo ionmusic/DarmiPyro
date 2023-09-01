@@ -13,9 +13,7 @@ def get_arg(message: Message):
     msg = message.text
     msg = msg.replace(" ", "", 1) if msg[1] == " " else msg
     split = msg[1:].replace("\n", " \n").split(" ")
-    if " ".join(split[1:]).strip() == "":
-        return ""
-    return " ".join(split[1:])
+    return "" if not " ".join(split[1:]).strip() else " ".join(split[1:])
 
 
 @Client.on_message(
@@ -38,7 +36,7 @@ async def gcast_cmd(client: Client, message: Message):
             elif get_arg:
                 msg = get_arg(message)
             chat = dialog.chat.id
-            if chat not in BL_GCAST and chat not in BL_GCAST:
+            if chat not in BL_GCAST:
                 try:
                     if message.reply_to_message:
                         await msg.copy(chat)
